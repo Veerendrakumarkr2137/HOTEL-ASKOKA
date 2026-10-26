@@ -1,17 +1,7 @@
 import { prisma } from '@hospitality-os/database'
 import { revalidatePath } from 'next/cache'
 
-function safeRevalidatePath(path: string) {
-  try {
-    revalidatePath(path)
-  } catch {
-    // Ignore static generation store error outside Next.js request context
-  }
-}
-
-
 export interface CheckInOptions {
-
   bookingId: string
   assignedRoomId: string
   authorName?: string
@@ -40,12 +30,6 @@ export class BookingService {
       throw new Error('Booking not found')
     }
 
-    // Idempotency: Return immediately if already checked in
-    if (booking.status === 'CHECKED_IN') {
-      console.log(`[BookingService:Idempotency] Booking ${booking.bookingRef} is already checked in. Skipping duplicate check-in.`)
-      return booking
-    }
-
     const room = await prisma.room.findUnique({
       where: { id: assignedRoomId },
     })
@@ -57,7 +41,6 @@ export class BookingService {
     if (room.status !== 'AVAILABLE' && room.status !== 'READY') {
       throw new Error(`Room ${room.roomNumber} is currently ${room.status} and cannot be assigned for check-in.`)
     }
-
 
     const updatedBooking = await prisma.$transaction(async (tx) => {
       // 1. Update booking status
@@ -136,14 +119,7 @@ export class BookingService {
       throw new Error('Booking not found')
     }
 
-    // Idempotency: Return immediately if already checked out
-    if (booking.status === 'CHECKED_OUT' || booking.status === 'COMPLETED') {
-      console.log(`[BookingService:Idempotency] Booking ${booking.bookingRef} is already checked out. Skipping duplicate checkout & billing.`)
-      return booking
-    }
-
     const targetRoomId = roomId || booking.allocations[0]?.roomId
-
 
     // Calculate total folio balance
     const totalPayments = booking.payments
@@ -221,14 +197,13 @@ export class BookingService {
       return b
     })
 
-    safeRevalidatePath('/bookings')
-    safeRevalidatePath(`/bookings/${bookingId}`)
-    safeRevalidatePath('/rooms')
-    safeRevalidatePath('/housekeeping')
+    revalidatePath('/bookings')
+    revalidatePath(`/bookings/${bookingId}`)
+    revalidatePath('/rooms')
+    revalidatePath('/housekeeping')
 
     return result
   }
-
 
   /**
    * Add internal receptionist note to a booking
@@ -241,7 +216,7 @@ export class BookingService {
         author: authorName,
       },
     })
-    safeRevalidatePath(`/bookings/${bookingId}`)
+    revalidatePath(`/bookings/${bookingId}`)
     return note
   }
 
@@ -267,25 +242,9 @@ export class BookingService {
   }
 
   /**
-   * Get booking by bookingRef
-   */
-  static async getByRef(bookingRef: string) {
-    return prisma.booking.findUnique({
-      where: { bookingRef },
-      include: {
-        user: true,
-        allocations: { include: { room: true } },
-        payments: true,
-        folioCharges: true,
-      },
-    })
-  }
-
-  /**
    * Update booking status with room status synchronization
    */
   static async updateStatus(bookingId: string, status: string, roomId?: string) {
-
     const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status: status as any },
@@ -304,13 +263,10 @@ export class BookingService {
       }
     }
 
-    safeRevalidatePath('/bookings')
-    safeRevalidatePath(`/bookings/${bookingId}`)
-    safeRevalidatePath('/rooms')
+    revalidatePath('/bookings')
+    revalidatePath(`/bookings/${bookingId}`)
+    revalidatePath('/rooms')
 
     return booking
   }
 }
-
-
-

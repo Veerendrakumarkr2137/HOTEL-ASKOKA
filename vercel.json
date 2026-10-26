@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "services": {
+    "hotel-web": {
+      "root": "apps/hotel-web",
+      "framework": "nextjs",
+      "buildCommand": "cd ../.. && pnpm turbo build --filter=hotel-web",
+      "installCommand": "cd ../.. && pnpm install"
+    },
+    "admin": {
+      "root": "apps/admin",
+      "framework": "nextjs",
+      "buildCommand": "cd ../.. && pnpm turbo build --filter=admin",
+      "installCommand": "cd ../.. && pnpm install"
+    }
+  }
+}

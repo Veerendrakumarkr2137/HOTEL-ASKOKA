@@ -416,14 +416,13 @@ export function BookingsTable({ initialBookings, allRooms }: BookingsTableProps)
                       <td className="px-6 py-4">{getStatusBadge(b.status)}</td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()} suppressHydrationWarning>
-                        <div className="flex items-center justify-end gap-1.5" suppressHydrationWarning>
+                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1.5">
                           {/* View Dedicated CRM Page */}
                           <Link
                             href={`/bookings/${b.id}`}
                             title="View Full Booking Details Page"
                             className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                            suppressHydrationWarning
                           >
                             <Eye size={15} />
                           </Link>
@@ -433,7 +432,6 @@ export function BookingsTable({ initialBookings, allRooms }: BookingsTableProps)
                             onClick={() => setSelectedBookingForEdit(b)}
                             title="Edit Reservation Status & Room"
                             className="p-1.5 text-slate-600 hover:text-[#C6A96B] hover:bg-amber-50 rounded-lg transition-colors"
-                            suppressHydrationWarning
                           >
                             <Edit size={15} />
                           </button>
@@ -444,7 +442,6 @@ export function BookingsTable({ initialBookings, allRooms }: BookingsTableProps)
                               href={`tel:${b.user.phone}`}
                               title="Call Guest"
                               className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                              suppressHydrationWarning
                             >
                               <Phone size={15} />
                             </a>
@@ -455,7 +452,6 @@ export function BookingsTable({ initialBookings, allRooms }: BookingsTableProps)
                             href={`mailto:${b.user?.email}`}
                             title="Send Confirmation Email"
                             className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            suppressHydrationWarning
                           >
                             <Mail size={15} />
                           </a>
@@ -467,14 +463,12 @@ export function BookingsTable({ initialBookings, allRooms }: BookingsTableProps)
                               disabled={cancellingId === b.id}
                               title="Cancel Reservation"
                               className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
-                              suppressHydrationWarning
                             >
                               <XCircle size={15} />
                             </button>
                           )}
                         </div>
                       </td>
-
                     </tr>
                   )
                 })

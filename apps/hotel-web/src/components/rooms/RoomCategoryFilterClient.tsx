@@ -29,14 +29,7 @@ export function RoomCategoryFilterClient({ categories }: { categories: Category[
     { id: 'classic', label: 'Classic Rooms' },
   ]
 
-  const CORE_ROOMS = ['deluxe non-ac', 'superior ac', 'family ac', 'king suite', 'deluxe', 'superior', 'family', 'suite']
-
-  const validCategories = categories.filter((cat) => {
-    const name = cat.name.toLowerCase()
-    return CORE_ROOMS.some((core) => name.includes(core))
-  })
-
-  const filteredCategories = validCategories.filter((cat) => {
+  const filteredCategories = categories.filter((cat) => {
     const name = cat.name.toLowerCase()
     if (filter === 'all') return true
     if (filter === 'suites') return name.includes('suite') || name.includes('king')
